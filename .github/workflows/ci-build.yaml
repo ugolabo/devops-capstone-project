@@ -1,0 +1,59 @@
+name: CI Build
+# run this workflow on every push and pull request
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+###
+# job runner: a Python Docker (image) container
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: python:3.9-slim
+###
+    # a Postgres service (image)
+    # listen on port, the default port
+    # pw and default db
+    # other specs
+    services:
+      postgres:
+        image: postgres:alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: pgs3cr3t
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+###
+    steps:
+      # check out the code?
+      - name: Checkout
+        uses: actions/checkout@v2
+      # install the dep in requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip wheel
+          pip install -r requirements.txt
+###
+      # lint the Python files
+      # Stop the build if there are Python syntax errors or undefined names
+      # Exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+      - name: Lint with flake8
+        run: |
+          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
+###
+      # run nosetests with setup.cfg
+      # nosetests -v --with-spec --spec-color --with-coverage --cover-package=service
+      #  add an environment variable to use the PostgreSQL database
+      - name: Run unit tests with nose
+        run: nosetests
+        env:
+          DATABASE_URI: "postgresql://postgres:pgs3cr3t@postgres:5432/testdb"
