@@ -464,3 +464,4 @@
 [build : build-and-push] Copying blob sha256:d2ae857413fcae35dc6a6fab12178e01173a65e7b8fe89b3119aeef7ab18329f
 [build : build-and-push] error pushing image "image-registry.openshift-image-registry.svc:5000/sn-labs-hsanterre1/accounts:1" to "docker://image-registry.openshift-image-registry.svc:5000/sn-labs-hsanterre1/accounts:1": trying to reuse blob sha256:ec983b16636050e69677eb81537e955ab927757c23aaf73971ecf5f71fcc262a at destination: pinging container registry image-registry.openshift-image-registry.svc:5000: Get "https://image-registry.openshift-image-registry.svc:5000/v2/": dial tcp 172.21.35.242:5000: i/o timeout
 
+
